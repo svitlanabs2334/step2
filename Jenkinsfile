@@ -9,7 +9,9 @@ pipeline {
     stages {
         stage('Pull Code') {
             steps {
-                git 'https://github.com/svitlanabs2334/step2.git'
+                git branch: 'main',
+                url: 'https://github.com/svitlanabs2334/step2.git',
+                credentialsId: 'github-pat'
             }
         }
         stage('Build Docker Image') {
