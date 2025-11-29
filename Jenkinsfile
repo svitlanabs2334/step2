@@ -2,7 +2,7 @@ pipeline {
     agent { label 'worker' }
 
     environment {
-        DOCKER_CREDENTIALS = credentials('docker-hub-credentials-id')
+        DOCKER_CREDENTIALS = credentials('docker-hub-svitlana')
         IMAGE_NAME = "svitlanabs2334/forstep2:latest"
     }
 
