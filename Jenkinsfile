@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Pull Code') {
             steps {
-                git 'https://github.com/yourusername/forStep2.git'
+                git 'https://github.com/svitlanabs2334/forStep2.git'
             }
         }
         stage('Build Docker Image') {
