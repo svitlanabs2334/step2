@@ -29,15 +29,17 @@ pipeline {
                 }
             }
         }
-        stage('Push Docker Image') {
-            steps {
-                script {
-                    sh "echo $DOCKER_CREDENTIALS_PSW | docker login -u $DOCKER_CREDENTIALS_USR --password-stdin"
-                    sh "docker push $IMAGE_NAME"
-                }
+    stage('Push Docker Image') {
+        steps {
+            withCredentials([string(credentialsId: 'DOCKER_CREDENTIALS_PSW', variable: 'DOCKER_PASS')]) {
+                sh '''
+                    echo $DOCKER_PASS | docker login -u svitlanabs2334 --password-stdin
+                    docker push svitlanabs2334/forstep2:latest
+                 '''
             }
         }
     }
+
 
     post {
         failure {
