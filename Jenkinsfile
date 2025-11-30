@@ -2,49 +2,60 @@ pipeline {
     agent { label 'worker' }
 
     environment {
-        DOCKER_CREDENTIALS = credentials('docker-hub-svitlana')
         IMAGE_NAME = "svitlanabs2334/forstep2:latest"
     }
 
     stages {
+
         stage('Pull Code') {
             steps {
                 git branch: 'main',
-                url: 'https://github.com/svitlanabs2334/step2.git',
-                credentialsId: 'github-pat'
+                    url: 'https://github.com/svitlanabs2334/step2.git',
+                    credentialsId: 'github-pat'
             }
         }
-    }
+
         stage('Build Docker Image') {
             steps {
                 sh 'docker build -t $IMAGE_NAME .'
             }
         }
+
         stage('Run Tests') {
             steps {
                 script {
-                    def testResult = sh(script: 'docker run --rm $IMAGE_NAME node test.js', returnStatus: true)
+                    def testResult = sh(
+                        script: 'docker run --rm $IMAGE_NAME node test.js',
+                        returnStatus: true
+                    )
                     if (testResult != 0) {
                         error("Tests failed")
                     }
                 }
             }
         }
-    stage('Push Docker Image') {
-        steps {
-            withCredentials([string(credentialsId: 'DOCKER_CREDENTIALS_PSW', variable: 'DOCKER_PASS')]) {
-                sh '''
-                    echo $DOCKER_PASS | docker login -u svitlanabs2334 --password-stdin
-                    docker push svitlanabs2334/forstep2:latest
-                 '''
+
+        stage('Push Docker Image') {
+            steps {
+                withCredentials([
+                    string(credentialsId: 'docker-hub-svitlana', variable: 'DOCKER_PASS')
+                ]) {
+                    sh '''
+                        echo $DOCKER_PASS | docker login -u svitlanabs2334 --password-stdin
+                        docker push svitlanabs2334/forstep2:latest
+                    '''
+                }
             }
         }
     }
 
-
     post {
         failure {
-            echo 'Tests failed'
+            echo "Tests failed"
+        }
+        success {
+            echo "Pipeline finished successfully"
         }
     }
 }
+
