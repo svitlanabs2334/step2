@@ -37,16 +37,21 @@ pipeline {
 
         stage('Push Docker Image') {
             steps {
-                withCredentials([
-                    string(credentialsId: 'docker-hub-svitlana', variable: 'DOCKER_PASS')
-                ]) {
-                    sh '''
-                        echo $DOCKER_PASS | docker login -u svitlanabs2334 --password-stdin
-                        docker push svitlanabs2334/forstep2:latest
-                    '''
+               withCredentials([
+                    usernamePassword(
+                    credentialsId: 'docker-hub-svitlana',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+               )
+              ]) {
+             sh '''
+                  echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                   docker push svitlanabs2334/forstep2:latest
+             '''
                 }
-            }
+             }
         }
+
     }
 
     post {
